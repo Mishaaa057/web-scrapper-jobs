@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup # to parse HTML code
 import requests # to make HTTP requests
 from urllib.parse import urljoin
+import csv # Save scrapped data as csv file
+
 
 def update_url(page=1):
     url = f"""
@@ -11,9 +13,9 @@ def update_url(page=1):
 
 def main():
     # google job search, location: San Jose CA
-    
-    url = update_url()
+    data = []
 
+    url = update_url()
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
     
     response = requests.get(url, headers=headers)
@@ -25,6 +27,7 @@ def main():
     jobs = soup.find_all("div", {"class":"sMn82b"})
     counter = 0
     
+    print(f"Number of jobs - [{number_jobs}]")
     
     for page in range(number_to_parse):
         page += 1
@@ -33,16 +36,19 @@ def main():
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.content, "html.parser")
         jobs = soup.find_all("div", {"class":"sMn82b"})
-        parse(jobs, counter)
+        data = parse(jobs, counter, data)
         counter+=20
-        # if page == 3:
+        print(f"Parsed page [{page}/{number_to_parse}]")
+        # if page == 1:
         #     exit()
     
     print("Finished")
+    write_data(data)
+    
 
     
     
-def parse(jobs, counter, debugging=False):
+def parse(jobs, counter, data, debugging=False):
     for job in jobs:
         counter += 1
         try:
@@ -57,8 +63,8 @@ def parse(jobs, counter, debugging=False):
             href = job.find("a", {"class": "WpHeLc VfPpkd-mRLv6 VfPpkd-RLmnJb"}, href=True).get("href")
             link = urljoin(base_link, href)
             
-            
-            
+            data.append([counter, experience, title, link])
+
             if debugging:
                 # Show parsed job
                 print(f"[{counter}] - [{experience}] {title}\n\t{link}")
@@ -68,6 +74,15 @@ def parse(jobs, counter, debugging=False):
             print(f"[ERROR]: [{counter}] - {err}")
             print("\n")
             break
+
+    return data
+
+def write_data(data, filename="job-data.csv"):
+    with open(filename, "w", newline='') as file:
+        spamwriter = csv.writer(file)
+        for line in data:
+            spamwriter.writerow(line)
+    print(f"Data saved in {filename}")
 
 
 if __name__=="__main__":
