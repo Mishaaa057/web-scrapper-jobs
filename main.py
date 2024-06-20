@@ -3,6 +3,7 @@ import requests # to make HTTP requests
 from urllib.parse import urljoin
 import csv # Save scrapped data as csv file
 
+DEBUGGING = False
 
 def update_url(page=1):
     url = f"""
@@ -39,8 +40,9 @@ def main():
         data = parse(jobs, counter, data)
         counter+=20
         print(f"Parsed page [{page}/{number_to_parse}]")
-        # if page == 1:
-        #     exit()
+        if DEBUGGING:
+            if page == 3:
+                exit()
     
     print("Finished")
     write_data(data)
@@ -48,7 +50,7 @@ def main():
 
     
     
-def parse(jobs, counter, data, debugging=False):
+def parse(jobs, counter, data):
     for job in jobs:
         counter += 1
         try:
@@ -57,7 +59,10 @@ def parse(jobs, counter, data, debugging=False):
             if experience_tag:
                 experience = experience_tag.string
             else:
-                experience = job.find_all("span", {"class":"RP7SMd"})[0].find("span").text
+                if len(job.find_all("span", {"class":"RP7SMd"}))>1:
+                    experience = job.find_all("span", {"class":"RP7SMd"})[1].find("span").text
+                else:
+                    experience = job.find_all("span", {"class":"RP7SMd"})[0].find("span").text
 
             base_link = "https://www.google.com/about/careers/applications"
             href = job.find("a", {"class": "WpHeLc VfPpkd-mRLv6 VfPpkd-RLmnJb"}, href=True).get("href")
@@ -65,15 +70,16 @@ def parse(jobs, counter, data, debugging=False):
             
             data.append([counter, experience, title, link])
 
-            if debugging:
+            if DEBUGGING:
                 # Show parsed job
                 print(f"[{counter}] - [{experience}] {title}\n\t{link}")
         
         except Exception as err:
             print("\n")
             print(f"[ERROR]: [{counter}] - {err}")
+            print(job.find_all("span", {"class":"RP7SMd"}))
             print("\n")
-            break
+            exit()
 
     return data
 
