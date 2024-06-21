@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup # to parse HTML code
 import requests # to make HTTP requests
 from urllib.parse import urljoin
-import csv # Save scrapped data as csv file
+import csv # Save scraped data as csv file
+
 
 DEBUGGING = True
 
