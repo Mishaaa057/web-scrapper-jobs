@@ -33,7 +33,9 @@ class TestWebScraper(unittest.TestCase):
         # Call the parse function
         counter = 0
         data = []
-        result = main.parse(soup, counter, data)
+        limit=-1
+        is_parsing=True
+        result, is_parsing = main.parse(soup, counter, data, limit, is_parsing)
 
         # Check if result is a list
         self.assertIsInstance(result, list)
