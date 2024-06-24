@@ -16,9 +16,9 @@ This Python script scrapes job listings from Googl'es sareers page for a specifi
   cd web-scrapper-jobs
   ```
 2. Install the required libraries
-   ```bash
-   pip install -r requirements.txt
-   ```
+  ```bash
+  pip install -r requirements.txt
+  ```
    
 ## Usage
 
