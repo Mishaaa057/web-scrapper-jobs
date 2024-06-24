@@ -10,10 +10,16 @@ This Python script scrapes job listings from Googl'es sareers page for a specifi
 - `argparse` library
 
 ## Installation
-```bash
-git clone https://github.com/Mishaaa057/web-scrapper-jobs/
-```
-
+1. Cloning the repository
+  ```bash
+  git clone https://github.com/Mishaaa057/web-scrapper-jobs/
+  cd web-scrapper-jobs
+  ```
+2. Install the required libraries
+   ```bash
+   pip install -r requirements.txt
+   ```
+   
 ## Usage
 
 Run the script with the desired options
